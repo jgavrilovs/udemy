@@ -20,7 +20,9 @@ function App() {
       <List>
         {activities.map((activity) => (
           <ListItem key={activity.id}>
-            <ListItemText>{activity.title}</ListItemText>
+            <ListItemText>
+              {activity.title} - {activity.date}
+            </ListItemText>
           </ListItem>
         ))}
       </List>
