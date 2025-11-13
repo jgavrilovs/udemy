@@ -1,9 +1,15 @@
-import { List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Box, Container, CssBaseline } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import NavBar from "./NavBar";
+import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 
 function App() {
   const [activities, setAcitivites] = useState<Activity[]>([]);
+
+  const [selectedActivity, setSelectedActivity] = useState<
+    Activity | undefined
+  >(undefined);
 
   useEffect(() => {
     axios
@@ -13,20 +19,29 @@ function App() {
     return () => {};
   }, []);
 
-  return (
-    <>
-      <Typography variant="h3">Welcome</Typography>
+  const handleSelectActivity = (id: string) => {
+    setSelectedActivity(activities.find((x) => x.id === id));
+  };
 
-      <List>
-        {activities.map((activity) => (
-          <ListItem key={activity.id}>
-            <ListItemText>
-              {activity.title} - {activity.date}
-            </ListItemText>
-          </ListItem>
-        ))}
-      </List>
-    </>
+  const handleCancelSelectActivity = () => {
+    setSelectedActivity(undefined);
+  };
+
+  return (
+    <Box sx={{ bgcolor: "#eee" }}>
+      <CssBaseline />
+
+      <NavBar />
+
+      <Container maxWidth="xl" sx={{ mt: 3 }}>
+        <ActivityDashboard
+          activities={activities}
+          selectActivity={handleSelectActivity}
+          cancelSelectActivity={handleCancelSelectActivity}
+          selectedActivity={selectedActivity}
+        ></ActivityDashboard>
+      </Container>
+    </Box>
   );
 }
 
