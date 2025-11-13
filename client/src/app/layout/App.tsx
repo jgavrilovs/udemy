@@ -11,6 +11,8 @@ function App() {
     Activity | undefined
   >(undefined);
 
+  const [editMode, setEditMode] = useState(false);
+
   useEffect(() => {
     axios
       .get<Activity[]>("https://localhost:5001/api/activities")
@@ -27,11 +29,23 @@ function App() {
     setSelectedActivity(undefined);
   };
 
+  const handleOpenForm = (id?: string) => {
+    if (id) handleSelectActivity(id);
+    else handleCancelSelectActivity();
+
+    setEditMode(true);
+  };
+
+  const handleFormClose = () => {
+    console.log("closing form");
+    setEditMode(false);
+  };
+
   return (
     <Box sx={{ bgcolor: "#eee" }}>
       <CssBaseline />
 
-      <NavBar />
+      <NavBar openForm={handleOpenForm} />
 
       <Container maxWidth="xl" sx={{ mt: 3 }}>
         <ActivityDashboard
@@ -39,6 +53,9 @@ function App() {
           selectActivity={handleSelectActivity}
           cancelSelectActivity={handleCancelSelectActivity}
           selectedActivity={selectedActivity}
+          editMode={editMode}
+          openForm={handleOpenForm}
+          closeForm={handleFormClose}
         ></ActivityDashboard>
       </Container>
     </Box>
