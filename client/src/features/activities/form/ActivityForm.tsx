@@ -1,6 +1,7 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
 import { useActivities } from "../../../lib/hooks/useActivities";
+import { create } from "@mui/material/styles/createTransitions";
 
 type Props = {
   activity?: Activity;
@@ -8,9 +9,9 @@ type Props = {
 };
 
 export default function ActivityForm({ activity, closeForm }: Props) {
-  const { updateActivity } = useActivities();
+  const { updateActivity, createActivity } = useActivities();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
@@ -23,9 +24,11 @@ export default function ActivityForm({ activity, closeForm }: Props) {
 
     if (activity) {
       data.id = activity.id;
-      updateActivity.mutate(data as unknown as Activity);
-      closeForm();
+      await updateActivity.mutateAsync(data as unknown as Activity);
+    } else {
+      await createActivity.mutateAsync(data as unknown as Activity);
     }
+    closeForm();
   };
 
   return (
@@ -73,7 +76,7 @@ export default function ActivityForm({ activity, closeForm }: Props) {
             color="success"
             type="submit"
             variant="contained"
-            disabled={updateActivity.isPending}
+            disabled={updateActivity.isPending || createActivity.isPending}
           >
             Submit
           </Button>
