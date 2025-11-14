@@ -1,7 +1,6 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
 import { useActivities } from "../../../lib/hooks/useActivities";
-import { create } from "@mui/material/styles/createTransitions";
 
 type Props = {
   activity?: Activity;
