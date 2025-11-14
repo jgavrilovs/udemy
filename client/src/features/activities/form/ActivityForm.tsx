@@ -1,17 +1,15 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import type { FormEvent } from "react";
+import { useActivities } from "../../../lib/hooks/useActivities";
 
 type Props = {
   activity?: Activity;
   closeForm: () => void;
-  submitForm: (activity: Activity) => void;
 };
 
-export default function ActivityForm({
-  activity,
-  closeForm,
-  submitForm,
-}: Props) {
+export default function ActivityForm({ activity, closeForm }: Props) {
+  const { updateActivity } = useActivities();
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -23,9 +21,11 @@ export default function ActivityForm({
       data[key] = value;
     });
 
-    if (activity) data.id = activity.id;
-
-    submitForm(data as unknown as Activity);
+    if (activity) {
+      data.id = activity.id;
+      updateActivity.mutate(data as unknown as Activity);
+      closeForm();
+    }
   };
 
   return (
@@ -65,7 +65,12 @@ export default function ActivityForm({
           <Button onClick={() => closeForm()} color="inherit">
             Cancel
           </Button>
-          <Button color="success" type="submit" variant="contained">
+          <Button
+            color="success"
+            type="submit"
+            variant="contained"
+            disabled={updateActivity.isPending}
+          >
             Submit
           </Button>
         </Box>
