@@ -1,6 +1,8 @@
 using Application.Activities.Commands;
 using Application.Activities.Queries;
+
 using Domain;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

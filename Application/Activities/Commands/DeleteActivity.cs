@@ -1,4 +1,5 @@
 using MediatR;
+
 using Persistence;
 
 namespace Application.Activities.Commands;

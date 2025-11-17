@@ -1,6 +1,9 @@
 using System;
+
 using Domain;
+
 using MediatR;
+
 using Persistence;
 
 namespace Application.Activities.Commands;
@@ -20,7 +23,7 @@ public class CreateActivity
 
             await context.SaveChangesAsync(cancellationToken);
 
-            return request.Activity.Id; 
+            return request.Activity.Id;
         }
     }
 }

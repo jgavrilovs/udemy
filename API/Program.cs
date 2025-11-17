@@ -1,6 +1,8 @@
 using Application.Activities.Queries;
 using Application.Core;
+
 using Microsoft.EntityFrameworkCore;
+
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

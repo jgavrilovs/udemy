@@ -1,6 +1,9 @@
 using AutoMapper;
+
 using Domain;
+
 using MediatR;
+
 using Persistence;
 
 namespace Application.Activities.Commands;
