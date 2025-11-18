@@ -1,10 +1,19 @@
+using System.Text.Json;
+using Application.Core;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Middleware;
 
-public class ExceptionMiddleware : IMiddleware
+public class ExceptionMiddleware(
+    ILogger<ExceptionMiddleware> logger,
+    IHostEnvironment env) : IMiddleware
 {
+    private static readonly JsonSerializerOptions JsonOpts = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
@@ -17,7 +26,7 @@ public class ExceptionMiddleware : IMiddleware
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            await HandleException(context, ex);
         }
     }
 
@@ -47,5 +56,20 @@ public class ExceptionMiddleware : IMiddleware
         };
 
         await context.Response.WriteAsJsonAsync(validationProblemDetails);
+    }
+
+    private async Task HandleException(HttpContext context, Exception ex)
+    {
+        logger.LogError(ex, ex.Message);
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+        var response = env.IsDevelopment()
+            ? new AppException(context.Response.StatusCode, ex.Message, ex.StackTrace)
+            : new AppException(context.Response.StatusCode, ex.Message, null);
+
+        var json = JsonSerializer.Serialize(response, JsonOpts);
+
+        await context.Response.WriteAsync(json);
     }
 }
